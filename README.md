@@ -8,6 +8,11 @@ JavaScript runs on a single thread. If you map over a massive array or do heavy 
 ## ✨ The Solution
 MicroThread takes your function, creates an inline Web Worker via Blob URLs, executes it on a separate CPU core, and returns the result as a Promise.
 
+## Access
+```html
+https://fdndimon.github.io/MicroThread/
+```
+
 ## 📦 Usage
 
 ```html
