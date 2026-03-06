@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>MicroThread Demo</title>
+  <style>
+    body { font-family: system-ui; text-align: center; padding-top: 50px; background: #f4f4f9; }
+    .spinner { width: 50px; height: 50px; border: 5px solid #ccc; border-top-color: #007bff; border-radius: 50%; animation: spin 1s linear infinite; margin: 20px auto; }
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+    button { padding: 12px 24px; font-size: 16px; margin: 10px; cursor: pointer; border-radius: 8px; border: none; font-weight: bold; }
+    .btn-bad { background: #ff4757; color: white; }
+    .btn-good { background: #2ed573; color: white; }
+    #result { margin-top: 20px; font-size: 1.2rem; font-weight: bold; }
+  </style>
+</head>
+<body>
+
+  <h1>MicroThread 🧵</h1>
+  <p>Watch the spinner. It will freeze on the red button, but stay smooth on the green!</p>
+  
+  <div class="spinner"></div>
+
+  <button class="btn-bad" id="btnSync">Calculate (Blocks UI)</button>
+  <button class="btn-good" id="btnAsync">Calculate (MicroThread)</button>
+  
+  <div id="result">Result will appear here</div>
+
+  <script src="microthread.js"></script>
+  <script>
+    // Супер тяжелая функция (считает простые числа)
+    const heavyTask = (maxLimit) => {
+      let count = 0;
+      for (let i = 2; i <= maxLimit; i++) {
+        let isPrime = true;
+        for (let j = 2; j < i; j++) {
+          if (i % j === 0) { isPrime = false; break; }
+        }
+        if (isPrime) count++;
+      }
+      return count;
+    };
+
+    const resultDiv = document.getElementById('result');
+
+    // 🔴 Обычный способ (вешает браузер)
+    document.getElementById('btnSync').onclick = () => {
+      resultDiv.innerText = "Calculating... (UI is frozen!)";
+      // setTimeout нужен только чтобы текст успел отрендериться перед зависанием
+      setTimeout(() => {
+        const result = heavyTask(150000); 
+        resultDiv.innerText = `Found ${result} primes (Sync)`;
+      }, 50);
+    };
+
+    // 🟢 С помощью MicroThread (UI работает идеально)
+    document.getElementById('btnAsync').onclick = async () => {
+      resultDiv.innerText = "Calculating in background thread...";
+      // Передаем саму функцию и аргумент
+      const result = await runAsync(heavyTask, 150000);
+      resultDiv.innerText = `Found ${result} primes (Async!)`;
+    };
+  </script>
+</body>
+</html>
